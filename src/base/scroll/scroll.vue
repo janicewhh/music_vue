@@ -31,8 +31,6 @@
         if(!this.$refs.wrapper){
           return
         }
-        console.log(this.$refs.wrapper.innerHTML)
-        alert(this.$refs.wrapper.offsetHeight)
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
           click: this.click
@@ -45,14 +43,12 @@
         this.scroll && this.scroll.disable()
       },
       refresh() {
-        console.log(this.scroll)
         this.scroll && this.scroll.refresh()
       }
     },
     watch: {
       data() {
         setTimeout(() => {
-          alert(333)
           this.refresh()
         }, 20)
       }
