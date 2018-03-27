@@ -1,7 +1,7 @@
 <template>
-  <scroll :data="data" class="listview">
+  <scroll :data="data" class="listview" ref="listview">
     <ul>
-      <li v-for="group in data" class="list-group">
+      <li v-for="group in data" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <uL>
           <li v-for="item in group.items" class="list-group-item">
@@ -11,31 +11,64 @@
         </uL>
       </li>
     </ul>
-    <!-- <div class="list-shortcut" @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove"
-         @touchend.stop>
+    <!--  @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove"
+           @touchend.stop>
+           v-for="(item, index) in shortcutList" :data-index="index" class="item"
+              :class="{'current':currentIndex===index}"
+           -->
+    <div class="list-shortcut">
       <ul>
-        <li v-for="(item, index) in shortcutList" :data-index="index" class="item"
-            :class="{'current':currentIndex===index}">{{item}}
+        <li v-for="(item, index) in shortcutList" @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove" :data-index="index">
+
+          {{item}}
         </li>
       </ul>
     </div>
-    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
-      <div class="fixed-title">{{fixedTitle}} </div>
-    </div>
-    <div v-show="!data.length" class="loading-container">
-      <loading></loading>
-    </div> -->
+    <!--<div class="list-fixed" ref="fixed" v-show="fixedTitle">
+        <div class="fixed-title">{{fixedTitle}} </div>
+      </div>
+      <div v-show="!data.length" class="loading-container">
+        <loading></loading>
+      </div> -->
   </scroll>
 </template>
 
 <script type="text/ecmascript-6">
 import Scroll from 'base/scroll/scroll'
+import { getData } from 'common/js/dom'
+const ANCHOR_HEIGHT = 16
 export default {
-  props:{
-    data:Array,
-    default:[]
+  created() {
+    this.touch = {}
   },
-  components:{
+  props: {
+    data: Array,
+    default: []
+  },
+  computed: {
+    shortcutList() {
+      return this.data.map((group) => {
+        return group.title.substring(0, 1)
+      })
+    }
+  },
+  methods: {
+    onShortcutTouchStart(e) {
+      let anchorIndex = parseInt(getData(e.target, 'index'))
+      let firstTouch = e.touches[0]
+      this.$refs.listview.scrollToElement(this.$refs.listGroup[anchorIndex], 0)
+      this.touch.pageY1 = firstTouch.pageY
+      this.touch.anchorIndex = anchorIndex
+    },
+    onShortcutTouchMove(e) {
+      let firstTouch = e.touches[0]
+      this.touch.pageY2 = firstTouch.pageY
+      let delta = (this.touch.pageY2 - this.touch.pageY1) / ANCHOR_HEIGHT | 0
+      let anchorIndex = this.touch.anchorIndex + delta
+      this.$refs.listview.scrollToElement(this.$refs.listGroup[anchorIndex], 0)
+    }
+  },
+  components: {
     Scroll
   }
 }
