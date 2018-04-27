@@ -1,9 +1,19 @@
 <template>
   <transition name="slide">
-    <div class="singer-detail"></div>
+    <div class="singer-detail">
+
+    </div>
   </transition>
 </template>
-<script></script>
+<script>
+  export default{
+    data() {
+      return {
+        show: false
+      }
+    },
+  }
+</script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
 
@@ -20,4 +30,5 @@
     transition : all 0.3s
   .slide-enter, .slide-leave-to
     transform : translate3d(100%,0,0)
+
 </style>
