@@ -6,12 +6,21 @@
   </transition>
 </template>
 <script>
+  import {mapGetters} from 'vuex'
   export default{
     data() {
       return {
-        show: false
+
       }
     },
+    computed: {
+      ...mapGetters([
+        'singer'
+      ])
+    },
+    created() {
+      console.log(this.singer)
+    }
   }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
